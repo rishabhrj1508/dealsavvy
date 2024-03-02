@@ -8,9 +8,9 @@ const isValidAmazonProductURL = (url: string) => {
     const parsedURL = new URL(url);
     const hostname = parsedURL.hostname;
 
-    if(
-      hostname.includes('amazon.com') || 
-      hostname.includes ('amazon.') || 
+    if (
+      hostname.includes('amazon.in') ||
+      hostname.includes('amazon.') ||
       hostname.endsWith('amazon')
     ) {
       return true;
@@ -31,7 +31,7 @@ const Searchbar = () => {
 
     const isValidLink = isValidAmazonProductURL(searchPrompt);
 
-    if(!isValidLink) return alert('Please provide a valid Amazon link')
+    if (!isValidLink) return alert('Please provide a valid Amazon link')
 
     try {
       setIsLoading(true);
@@ -46,11 +46,11 @@ const Searchbar = () => {
   }
 
   return (
-    <form 
-      className="flex flex-wrap gap-4 mt-12" 
+    <form
+      className="flex flex-wrap gap-4 mt-12"
       onSubmit={handleSubmit}
     >
-      <input 
+      <input
         type="text"
         value={searchPrompt}
         onChange={(e) => setSearchPrompt(e.target.value)}
@@ -58,8 +58,8 @@ const Searchbar = () => {
         className="searchbar-input"
       />
 
-      <button 
-        type="submit" 
+      <button
+        type="submit"
         className="searchbar-btn"
         disabled={searchPrompt === ''}
       >
