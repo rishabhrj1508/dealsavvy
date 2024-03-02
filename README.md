@@ -29,10 +29,6 @@
 6. 🔗 [Links](#links)
 7. 🚀 [More](#more)
 
-## 🚨 Tutorial
-
-This repository contains the code corresponding to an in-depth tutorial available on our YouTube channel, <a href="https://www.youtube.com/@javascriptmastery/videos" target="_blank"><b>JavaScript Mastery</b></a>. 
-
 If you prefer visual learning, this is the perfect resource for you. Follow our tutorial to learn how to build projects like these step-by-step in a beginner-friendly manner!
 
 <a href="https://youtu.be/lh9XVGv6BHs?si=BquPyhI_o2f8jHqV" target="_blank"><img src="https://github.com/sujatagunale/EasyRead/assets/151519281/1736fca5-a031-4854-8c09-bc110e3bc16d" /></a>
@@ -71,7 +67,7 @@ If you're getting started and need assistance or face any bugs, join our active 
 
 👉 **Automated Cron Jobs**: Utilize cron jobs to automate periodic scraping, ensuring data is up-to-date.
 
-and many more, including code architecture and reusability 
+and many more, including code architecture and reusability
 
 ## <a name="quick-start">🤸 Quick Start</a>
 
@@ -135,7 +131,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view the 
 ```typescript
 import { NextResponse } from "next/server";
 
-import { getLowestPrice, getHighestPrice, getAveragePrice, getEmailNotifType } from "@/lib/utils";
+import {
+  getLowestPrice,
+  getHighestPrice,
+  getAveragePrice,
+  getEmailNotifType,
+} from "@/lib/utils";
 import { connectToDB } from "@/lib/mongoose";
 import Product from "@/lib/models/product.model";
 import { scrapeAmazonProduct } from "@/lib/scraper";
@@ -196,9 +197,14 @@ export async function GET(request: Request) {
             url: updatedProduct.url,
           };
           // Construct emailContent
-          const emailContent = await generateEmailBody(productInfo, emailNotifType);
+          const emailContent = await generateEmailBody(
+            productInfo,
+            emailNotifType
+          );
           // Get array of user emails
-          const userEmails = updatedProduct.users.map((user: any) => user.email);
+          const userEmails = updatedProduct.users.map(
+            (user: any) => user.email
+          );
           // Send email notification
           await sendEmail(emailContent, userEmails);
         }
@@ -226,7 +232,7 @@ export async function GET(request: Request) {
 export async function generateEmailBody(
   product: EmailProductInfo,
   type: NotificationType
-  ) {
+) {
   const THRESHOLD_PERCENTAGE = 40;
   // Shorten the product title
   const shortenedTitle =
@@ -460,14 +466,14 @@ export async function generateEmailBody(
 <summary><code>index.scraper.ts</code></summary>
 
 ```typescript
-"use server"
+"use server";
 
-import axios from 'axios';
-import * as cheerio from 'cheerio';
-import { extractCurrency, extractDescription, extractPrice } from '../utils';
+import axios from "axios";
+import * as cheerio from "cheerio";
+import { extractCurrency, extractDescription, extractPrice } from "../utils";
 
 export async function scrapeAmazonProduct(url: string) {
-  if(!url) return;
+  if (!url) return;
 
   // BrightData proxy configuration
   const username = String(process.env.BRIGHT_DATA_USERNAME);
@@ -480,10 +486,10 @@ export async function scrapeAmazonProduct(url: string) {
       username: `${username}-session-${session_id}`,
       password,
     },
-    host: 'brd.superproxy.io',
+    host: "brd.superproxy.io",
     port,
     rejectUnauthorized: false,
-  }
+  };
 
   try {
     // Fetch the product page
@@ -491,54 +497,56 @@ export async function scrapeAmazonProduct(url: string) {
     const $ = cheerio.load(response.data);
 
     // Extract the product title
-    const title = $('#productTitle').text().trim();
+    const title = $("#productTitle").text().trim();
     const currentPrice = extractPrice(
-      $('.priceToPay span.a-price-whole'),
-      $('.a.size.base.a-color-price'),
-      $('.a-button-selected .a-color-base'),
+      $(".priceToPay span.a-price-whole"),
+      $(".a.size.base.a-color-price"),
+      $(".a-button-selected .a-color-base")
     );
 
     const originalPrice = extractPrice(
-      $('#priceblock_ourprice'),
-      $('.a-price.a-text-price span.a-offscreen'),
-      $('#listPrice'),
-      $('#priceblock_dealprice'),
-      $('.a-size-base.a-color-price')
+      $("#priceblock_ourprice"),
+      $(".a-price.a-text-price span.a-offscreen"),
+      $("#listPrice"),
+      $("#priceblock_dealprice"),
+      $(".a-size-base.a-color-price")
     );
 
-    const outOfStock = $('#availability span').text().trim().toLowerCase() === 'currently unavailable';
+    const outOfStock =
+      $("#availability span").text().trim().toLowerCase() ===
+      "currently unavailable";
 
-    const images = 
-      $('#imgBlkFront').attr('data-a-dynamic-image') || 
-      $('#landingImage').attr('data-a-dynamic-image') ||
-      '{}'
+    const images =
+      $("#imgBlkFront").attr("data-a-dynamic-image") ||
+      $("#landingImage").attr("data-a-dynamic-image") ||
+      "{}";
 
     const imageUrls = Object.keys(JSON.parse(images));
 
-    const currency = extractCurrency($('.a-price-symbol'))
-    const discountRate = $('.savingsPercentage').text().replace(/[-%]/g, "");
+    const currency = extractCurrency($(".a-price-symbol"));
+    const discountRate = $(".savingsPercentage").text().replace(/[-%]/g, "");
 
-    const description = extractDescription($)
+    const description = extractDescription($);
 
     // Construct data object with scraped information
     const data = {
       url,
-      currency: currency || '$',
+      currency: currency || "$",
       image: imageUrls[0],
       title,
       currentPrice: Number(currentPrice) || Number(originalPrice),
       originalPrice: Number(originalPrice) || Number(currentPrice),
       priceHistory: [],
       discountRate: Number(discountRate),
-      category: 'category',
-      reviewsCount:100,
+      category: "category",
+      reviewsCount: 100,
       stars: 4.5,
       isOutOfStock: outOfStock,
       description,
       lowestPrice: Number(currentPrice) || Number(originalPrice),
       highestPrice: Number(originalPrice) || Number(currentPrice),
       averagePrice: Number(currentPrice) || Number(originalPrice),
-    }
+    };
 
     return data;
   } catch (error: any) {
@@ -557,14 +565,14 @@ export async function scrapeAmazonProduct(url: string) {
 const nextConfig = {
   experimental: {
     serverActions: true,
-    serverComponentsExternalPackages: ['mongoose']
+    serverComponentsExternalPackages: ["mongoose"],
   },
   images: {
-    domains: ['m.media-amazon.com']
-  }
-}
+    domains: ["m.media-amazon.com"],
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
 ```
 
 </details>
@@ -585,8 +593,8 @@ module.exports = {
       colors: {
         primary: {
           DEFAULT: "#E43030",
-          "orange": "#D48D3B",
-          "green": "#3E9242"
+          orange: "#D48D3B",
+          green: "#3E9242",
         },
         secondary: "#282828",
         "gray-200": "#EAECF0",
@@ -604,15 +612,15 @@ module.exports = {
         xs: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
       },
       maxWidth: {
-        "10xl": '1440px'
+        "10xl": "1440px",
       },
       fontFamily: {
-        inter: ['Inter', 'sans-serif'],
-        spaceGrotesk: ['Space Grotesk', 'sans-serif'],
+        inter: ["Inter", "sans-serif"],
+        spaceGrotesk: ["Space Grotesk", "sans-serif"],
       },
       borderRadius: {
-        10: "10px"
-      }
+        10: "10px",
+      },
     },
   },
   plugins: [],
@@ -680,11 +688,11 @@ export type EmailProductInfo = {
 import { PriceHistoryItem, Product } from "@/types";
 
 const Notification = {
-  WELCOME: 'WELCOME',
-  CHANGE_OF_STOCK: 'CHANGE_OF_STOCK',
-  LOWEST_PRICE: 'LOWEST_PRICE',
-  THRESHOLD_MET: 'THRESHOLD_MET',
-}
+  WELCOME: "WELCOME",
+  CHANGE_OF_STOCK: "CHANGE_OF_STOCK",
+  LOWEST_PRICE: "LOWEST_PRICE",
+  THRESHOLD_MET: "THRESHOLD_MET",
+};
 
 const THRESHOLD_PERCENTAGE = 40;
 
@@ -693,20 +701,20 @@ export function extractPrice(...elements: any) {
   for (const element of elements) {
     const priceText = element.text().trim();
 
-    if(priceText) {
-      const cleanPrice = priceText.replace(/[^\d.]/g, '');
+    if (priceText) {
+      const cleanPrice = priceText.replace(/[^\d.]/g, "");
 
-      let firstPrice; 
+      let firstPrice;
 
       if (cleanPrice) {
         firstPrice = cleanPrice.match(/\d+\.\d{2}/)?.[0];
-      } 
+      }
 
       return firstPrice || cleanPrice;
     }
   }
 
-  return '';
+  return "";
 }
 
 // Extracts and returns the currency symbol from an element.
