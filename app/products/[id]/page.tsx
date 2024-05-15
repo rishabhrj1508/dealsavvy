@@ -102,7 +102,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
                     height={16}
                   />
                   <p className="text-sm text-primary-orange font-semibold">
-                    {product.stars || '25'}
+                    {product.stars || '4.5'}
                   </p>
                 </div>
 
@@ -166,7 +166,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
           </div>
         </div>
 
-        <button className="btn w-fit mx-auto flex items-center justify-center gap-3 min-w-[200px]">
+        {/* <button className="btn w-fit mx-auto flex items-center justify-center gap-3 min-w-[200px]">
           <Image
             src="/assets/icons/bag.svg"
             alt="check"
@@ -177,7 +177,7 @@ const ProductDetails = async ({ params: { id } }: Props) => {
           <Link href="/" className="text-base text-white">
             Buy Now
           </Link>
-        </button>
+        </button> */}
       </div>
 
       {similarProducts && similarProducts?.length > 0 && (
