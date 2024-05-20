@@ -14,8 +14,6 @@ const isValidAmazonProductURL = (url: string) => {
       return false;
     }
 
-    // Check if the URL matches the pattern of a single product page
-    // You can customize this pattern based on the structure of Amazon product URLs
     if (path.match(/^\/[a-zA-Z0-9-]+\/dp\/[a-zA-Z0-9]+/)) {
       return true;
     }
@@ -30,6 +28,7 @@ const isValidAmazonProductURL = (url: string) => {
       hostname.includes('amazon.in') ||
       hostname.includes('amazon.com') ||
       hostname.includes('amazon.') ||
+      hostname.includes('amzn.') ||
       hostname.endsWith('amazon')
     ) {
       return true;
